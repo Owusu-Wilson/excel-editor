@@ -59,7 +59,7 @@ function Home() {
   };
 
   return (
-    <div className="container p-4" style={{ fontFamily: "Inter" }}>
+    <div className="container p-10" style={{ fontFamily: "Inter" }}>
       <h1 className=" text-7xl font-semibold ">
         Upload <span className="text-green-500">Excel</span>
       </h1>
@@ -74,6 +74,7 @@ function Home() {
       </div>
       <div className="flex h-16 mt-2 justify-between flex-row">
         <Button
+          disabled={tableData.length < 1}
           gradientMonochrome={toggleShowTable ? "failure" : "success"}
           onClick={() => {
             console.log(dataColumns);
