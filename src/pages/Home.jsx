@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   Button,
+  Card,
   FileInput,
   Label,
   Table,
@@ -8,6 +9,7 @@ import {
   TableCell,
   TableHead,
   TableHeadCell,
+  TableRow,
 } from "flowbite-react"; // Assuming FileInput is from your custom library
 import * as XLSX from "xlsx";
 
@@ -15,6 +17,7 @@ function Home() {
   const [selectedFile, setSelectedFile] = useState();
   const [toggleShowTable, setToggleShowTable] = useState(false);
   const [dataColumns, setDataColumns] = useState([]);
+  const [tableData, setTableData] = useState([]);
 
   const readFirstWorkSheet = (excelFile) => {
     // Reading the contents of the excel file
@@ -31,6 +34,7 @@ function Home() {
       const firstRow = jsonData[0];
       const columnNames = Object.keys(firstRow);
       setDataColumns(columnNames);
+      setTableData(jsonData);
       console.log("headings: ", columnNames);
       console.log("Excel data:", jsonData); // Do something with the parsed data
     };
@@ -68,26 +72,52 @@ function Home() {
           helperText="Add new data easily by uploading an existing excel file"
         />
       </div>
-      <Button
-        onClick={() => {
-          console.log(dataColumns);
-          setToggleShowTable(!toggleShowTable);
-        }}
-      >
-        {toggleShowTable ? "Hide Preview" : "Show Preview"}
-      </Button>
+      <div className="flex h-16 mt-2 justify-between flex-row">
+        <Button
+          gradientMonochrome={toggleShowTable ? "failure" : "success"}
+          onClick={() => {
+            console.log(dataColumns);
+            setToggleShowTable(!toggleShowTable);
+          }}
+        >
+          {toggleShowTable ? "Hide Preview" : "Show Preview"}
+        </Button>
+
+        <div>
+          <h1 className="text-3xl font-bold">{dataColumns.length}</h1>
+          <p className="text-gray-600">Columns Found</p>
+        </div>
+        <div>
+          <h1 className="text-3xl font-bold">{tableData.length}</h1>
+          <p className="text-gray-600">Rows Found</p>
+        </div>
+      </div>
       <div className="mt-4">
-        <Table>
+        <Table hoverable>
           <TableHead>
             {toggleShowTable &&
               dataColumns.map((columnName) => (
                 <TableHeadCell key={columnName}>{columnName}</TableHeadCell>
               ))}
           </TableHead>
-          <TableBody>
+          <TableBody className="divide-y">
             {toggleShowTable &&
-              jsonData.map((columnName) => (
-                <TableCell key={columnName}>{columnName}</TableCell>
+              tableData.slice(1, 200).map((item) => (
+                <TableRow
+                  className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                  key={item.id || item.name || Math.random()}
+                >
+                  {dataColumns.map((columnName) => (
+                    <TableCell
+                      className="whitespace-nowrap font-medium text-gray-900 dark:text-white"
+                      key={`${tableData.indexOf(item)},${dataColumns.indexOf(
+                        columnName
+                      )}`}
+                    >
+                      {item[columnName]}
+                    </TableCell>
+                  ))}
+                </TableRow>
               ))}
           </TableBody>
         </Table>
