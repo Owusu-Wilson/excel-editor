@@ -12,11 +12,13 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",
     "bootstrap": "^5.3.2",
+    "flowbite-react": "^0.7.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.0.4",
     "react-router-dom": "^6.21.1",
-    "reactstrap": "^9.2.1"
+    "reactstrap": "^9.2.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
