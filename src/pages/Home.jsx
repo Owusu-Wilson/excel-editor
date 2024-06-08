@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import {
   Button,
@@ -10,14 +11,22 @@ import {
   TableHead,
   TableHeadCell,
   TableRow,
+  Badge,
 } from "flowbite-react"; // Assuming FileInput is from your custom library
 import * as XLSX from "xlsx";
+import { FaListAlt, FaListUl } from "react-icons/fa";
+
+import { HiClock } from "react-icons/hi";
+import { FaFileArrowUp } from "react-icons/fa6";
+import { FaFileCsv, FaFileExcel } from "react-icons/fa6";
 
 function Home() {
   const [selectedFile, setSelectedFile] = useState();
+  const [badgeIcon, setBadgeIcon] = useState();
   const [toggleShowTable, setToggleShowTable] = useState(false);
   const [dataColumns, setDataColumns] = useState([]);
   const [tableData, setTableData] = useState([]);
+  const icons = { excel: FaFileExcel, csv: FaFileCsv, none: FaFileArrowUp };
 
   const readFirstWorkSheet = (excelFile) => {
     // Reading the contents of the excel file
@@ -55,22 +64,55 @@ function Home() {
     const file = event.target.files[0];
     console.log("File selected:", file); // Log file name and size
     setSelectedFile(file);
+
     readFirstWorkSheet(file);
   };
 
   return (
-    <div className="container p-10" style={{ fontFamily: "Inter" }}>
+    <div className="container p-20 " style={{ fontFamily: "Inter" }}>
       <h1 className=" text-7xl font-semibold ">
         Upload <span className="text-green-500">Excel</span>
       </h1>
-      <div id="fileUpload" className="max-w-md mt-5">
-        <FileInput
-          id="file"
-          name="file"
-          accept=".xlsx, .xls" // Accept only .xlsx and .xls files
-          onChange={handleFileUpload}
-          helperText="Add new data easily by uploading an existing excel file"
-        />
+      <div className="flex flex-row  mt-2 justify-between">
+        <div id="fileUpload" className="max-w-md mt-5">
+          <FileInput
+            id="file"
+            name="file"
+            accept=".xlsx, .xls, .csv" // Accept only these file types
+            onChange={handleFileUpload}
+            helperText="Add new data easily by uploading an existing excel file"
+          />
+        </div>
+        {/* <FaListAlt
+          size={40}
+          color="green"
+          onClick={() => alert("Nothing Yet")}
+        /> */}
+        <Badge
+          color={
+            selectedFile
+              ? selectedFile.name.split(".")[1] === "csv"
+                ? "warning"
+                : selectedFile.name.split(".")[1] === "xlsx" ||
+                  selectedFile.name.split(".")[1] === "xls"
+                ? "success"
+                : "gray"
+              : "gray"
+          }
+          size={40}
+          icon={
+            selectedFile
+              ? selectedFile.name.split(".")[1] === "csv"
+                ? icons.csv
+                : selectedFile.name.split(".")[1] === "xlsx" ||
+                  selectedFile.name.split(".")[1] === "xls"
+                ? icons.excel
+                : icons.none
+              : icons.none
+          }
+        >
+          {selectedFile ? selectedFile.name.split(".")[1] : "none"}
+        </Badge>
       </div>
       <div className="flex h-16 mt-2 justify-between flex-row">
         <Button
@@ -94,6 +136,11 @@ function Home() {
         </div>
       </div>
       <div className="mt-4">
+        {dataColumns.length < 1 ? (
+          <h1 className="flex flex-1 justify-center items-center mt-[200px] text-center h-1/2 text-7xl text text-gray-600">
+            Nothing to Display
+          </h1>
+        ) : null}
         <Table hoverable>
           <TableHead>
             {toggleShowTable &&
